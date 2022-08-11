@@ -1,0 +1,232 @@
+<html lang="en"><head>
+  <title>PA Call webcomponent</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="scripts/zoid.js"></script>
+  <script src="scripts/client-sdk.js"></script>
+
+
+
+  <style>
+    .container {
+      margin-top: 3%;
+    }
+
+    .buttons {
+      margin-top: 3px;
+      float: right;
+    }
+
+    #records_table {
+      font-family: 'Noto Sans', sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+      font-weight: 400;
+      /*border: 1px solid rgb(255, 255, 255);*/
+    }
+
+    #records_table td,
+    #customers th {
+      /*border: 1px solid grey;*/
+      padding: 8px;
+      color: blue;
+    }
+
+    #records_table th {
+      padding: 8px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #505559;
+
+    }
+
+    /* .btn.active {
+            background: #337ab7;
+            text-decoration: none;
+        } */
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+
+    #success, #failure {
+      visibility: hidden;
+      width: 210px;
+      background-color: #5cb85c;
+      color: #fff;
+      text-align: center;
+      border-radius: 2px;
+      padding: 2px;
+      position: fixed;
+      z-index: 1;
+      bottom: 1%;
+      font-size: 11px;
+    }
+
+    #success.show, #failure.show {
+      visibility: visible;
+      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+  </style>
+</head>
+
+<body style=" background-color: #20262C;" cz-shortcut-listen="true">
+
+  <div class="container">
+    <table id="records_table" border="0">
+      <tbody><tr>
+    <!--<div calss="row">
+      <div class="col">-->
+        <td><label style="color: white;">Select Controller</label></td><td>
+      <!--</div>
+    </div>-->
+  </td></tr>
+  <tr>
+    <!--<div class="row">
+      <div class="col-3 col-sm-1">-->
+        <td><input type="radio" value="F101" id="F101" checked="checked" name="controller">
+        <label style="color: white;">F101</label>&nbsp;&nbsp;
+      <!--</div>
+      <div class="col-3 col-sm-1">-->
+        <input type="radio" value="F102" id="F102" name="controller">
+        <label style="color: white;">F102</label></td>
+     <!-- </div>
+    </div>-->
+  </tr>
+  <tr>
+    <!--<div class="row"> <label>  </label> </div>
+    <div class="row">
+      <div class="col">-->
+        <td><button calss="btn" value="start" id="start">Start Announcement</button></td>
+      <!--</div>
+    </div>-->
+  </tr>
+  <tr>
+    <!--<div class="row"> <label>  </label> </div>
+    <div class="row">
+      <div class="col">-->
+        <td><button calss="btn" value="stop" id="stop">Stop Announcement</button></td>
+      <!--</div>
+    </div>-->
+  </tr>
+  </tbody></table>  
+    <div id="success">Submission Success .</div>
+    <div id="failure">Submission Failed .</div>
+  </div>
+
+
+
+
+<script>
+  function success() {
+    var x = document.getElementById("success");
+    x.className = "show";
+    setTimeout(function () { x.className = x.className.replace("show", ""); }, 6000);
+  }
+
+  function failed() {
+    var x = document.getElementById("failure");
+    x.className = "show";
+    setTimeout(function () { x.className = x.className.replace("show", ""); }, 6000);
+  }
+</script>
+
+<script>
+      
+   $(document).ready(function () {
+
+    function f1(obj) {
+
+       var id=window.xprops.data.response.data.id;
+       var link=window.xprops.data.response.data.URL;
+//      var link="https://dashboard.smartcityimphal.com/qpa/1.0.0/webhooks/imphal.com/pas_live_announc?apikey=a3dbe0d9-4638-447a-ae18-1727d57b986a";
+ //     var link="https://fusion-dashboard.lnttic.com/qpa/1.0.0/webhooks/lnttic.com/PAliveAnnouncement?apikey=6eb6ed94-b44e-4c3a-869d-78f24ee077c7"
+      var id=['F201','F202'];
+      var type=obj;
+      var controler=$("input[name='controller']:checked").val();
+      console.log(id,type,controler);
+      var dataObj = JSON.stringify({"input":{"id":id,"type":type,"controler":controler}});
+     // var dataObj = {"input":{"id":id,"type":type,"controler":controler}};
+      console.log(dataObj);
+      
+      $.ajax({
+            type: "POST",
+            url: link,
+            headers: {
+              "accept": "application/json ",
+              "content-type": "application/json"
+            },
+            data: dataObj,
+          }).done(function (data) {
+            if (data) {
+              console.log(dataObj);
+              success();
+            } else {
+              //alert("wrong");
+              console.log(dataObj);
+              failed();
+            }
+          });
+    }
+
+      $("body").on("click", 'button', function (event) {
+        f1($(this).attr('value'));
+      });
+    });
+
+
+     /* const startbtn = document.querySelector('#start');        
+      const stopbtn = document.querySelector('#stop');        
+
+      //var id=window.xprops.data.response.data.ids
+
+      startbtn.addEventListener("click",() => {
+        var controll=''
+        for(const radbtns of radbtn)
+        {
+          if(radbtns.checked)
+            controll=radbtns.value;
+        }
+        console.log(id,controll,"Start");
+
+      })
+
+      stopbtn.addEventListener("click",() => {
+        var controll=''
+        for(const radbtns of radbtn)
+        {
+          if(radbtns.checked)
+            controll=radbtns.value;
+        }
+        console.log(id,controll,"Start");
+
+      })*/
+
+
+</script>
+
+
+</body></html>
