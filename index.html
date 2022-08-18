@@ -159,12 +159,13 @@
    $(document).ready(function () {
 
     function f1(obj) {
-     //obj= ["F202","x-Follow-traffic-rule","00600090F202030B01F1"];
-      var displayMsg=window.xprops.data.response.data.id	  
+	 //obj= ["F202","x-Follow-traffic-rule","00600090F202030B01F1"];
+      var displayMsg=window.xprops.data.response.data.displaymsg	  ;
 	  var staticMsg= window.xprops.data.response.data.staticMsg	;
 	  var controler=$("input[name='controller']:checked").val();
 	   var id=window.xprops.data.response.data.id;//ie.,PA junction calling No:ex- FFFFYYYY, FFFF2003, FFFFF203 
 	  //var id='F201';
+	  var cred = window.xprops.data.response.data.creds;
 	   var link=window.xprops.data.response.data.URL; 
 	  //var link="https://fusion-dashboard.lnttic.com/qpa/1.0.0/webhooks/lnttic.com/ECBPAS?apikey=d524fccd-0c13-471d-852d-45eea278e617"
       var type=obj;
@@ -173,9 +174,30 @@
     "id": id,
     "displayMessage": displayMsg,
     "message": staticMsg+controler+id
-  }]});  
-      console.log(dataObj);
-      $.ajax({
+  }]}); 
+ obj= ["F202","x-Follow-traffic-rule","00600090F202030B01F1"];
+     
+  
+//start
+ $.ajax({
+      type: "POST",
+      //  url: "https://atlantis-qa4-dashboard.quantela.com/ds/1.0.0/public/sign-in",
+      	  url: "https://fusion-dashboard.lnttic.com/ds/1.0.0/public/login",
+//      url: "https://dashboard.karnatakasmartcity.in/ds/1.0.0/public/login",
+      headers: {
+        "content-type": "application/json"
+      },
+      data: JSON.stringify(cred)
+    }).done(function (resp) {
+        // ============================================  
+        var txtValue= resp;
+//alert("login success");
+        if(txtValue==""||txtValue==null){
+         document.getElementById('btnSubmit').disabled = true;
+       }
+       else
+       { //alert("login fail");
+        $.ajax({
             type: "POST",
             url: link,
             headers: {
@@ -185,14 +207,24 @@
             data:dataObj,
           }).done(function (data) {
             if (data) {
-              console.log("success"+dataObj);
+              console.log(dataObj);
               success();
             } else {
               //alert("wrong");
-              console.log("fail"+dataObj);
+              console.log(dataObj);
               failed();
             }
           });
+	  //adaptor ingestion
+	  
+     
+      }
+
+    }) ; 
+
+//end
+      console.log(dataObj);
+    
     }
 
       $("body").on("click", 'button', function (event) {
