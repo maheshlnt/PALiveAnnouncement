@@ -202,6 +202,7 @@
             url: link,
             headers: {
               "accept": "application/json ",
+			    "authorization": "Bearer " + resp.access_token,
               "content-type": "application/json"
             },
             data:dataObj,
