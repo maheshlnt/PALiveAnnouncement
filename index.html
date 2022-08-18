@@ -159,18 +159,22 @@
    $(document).ready(function () {
 
     function f1(obj) {
-
-       var id=window.xprops.data.response.data.id;
-       var link=window.xprops.data.response.data.URL;  
-    //  var link="https://fusion-dashboard.lnttic.com/qpa/1.0.0/webhooks/lnttic.com/PAliveAnnouncement?apikey=6eb6ed94-b44e-4c3a-869d-78f24ee077c7"
-    //  var id=['F201','F202'];
+     //obj= ["F202","x-Follow-traffic-rule","00600090F202030B01F1"];
+      var displayMsg=window.xprops.data.response.data.id	  
+	  var staticMsg= window.xprops.data.response.data.staticMsg	;
+	  var controler=$("input[name='controller']:checked").val();
+	   var id=window.xprops.data.response.data.id;//ie.,PA junction calling No:ex- FFFFYYYY, FFFF2003, FFFFF203 
+	  //var id='F201';
+	   var link=window.xprops.data.response.data.URL; 
+	  //var link="https://fusion-dashboard.lnttic.com/qpa/1.0.0/webhooks/lnttic.com/ECBPAS?apikey=d524fccd-0c13-471d-852d-45eea278e617"
       var type=obj;
-      var controler=$("input[name='controller']:checked").val();
-      console.log(id,type,controler);
-      var dataObj = JSON.stringify({"input":{"id":id,"type":type,"controler":controler}});
-     // var dataObj = {"input":{"id":id,"type":type,"controler":controler}};
+     // console.log(id,type,controler);
+		     var  dataObj= JSON.stringify({"input":[{
+    "id": id,
+    "displayMessage": displayMsg,
+    "message": staticMsg+controler+id
+  }]});  
       console.log(dataObj);
-      
       $.ajax({
             type: "POST",
             url: link,
@@ -178,14 +182,14 @@
               "accept": "application/json ",
               "content-type": "application/json"
             },
-            data: dataObj,
+            data:dataObj,
           }).done(function (data) {
             if (data) {
-              console.log(dataObj);
+              console.log("success"+dataObj);
               success();
             } else {
               //alert("wrong");
-              console.log(dataObj);
+              console.log("fail"+dataObj);
               failed();
             }
           });
